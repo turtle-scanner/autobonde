@@ -1,0 +1,33 @@
+name: Bonde Trading Bot
+
+on:
+  schedule:
+    # 한국 시간 기준 평일 오전 8시 30분에 시작 (UTC 23:30)
+    - cron: '30 23 * * 1-5'
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Bonde Bot
+        env:
+          KIS_MY_APP: ${{ secrets.KIS_MY_APP }}
+          KIS_MY_SEC: ${{ secrets.KIS_MY_SEC }}
+          KIS_ACCOUNT_NO: ${{ secrets.KIS_ACCOUNT_NO }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python bonde_procedural_bot.py
